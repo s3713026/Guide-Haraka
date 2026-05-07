@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haraka Email Server — Setup Guidelines</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      line-height: 1.75;
+      color: #1a1a1a;
+      background: #f5f6f8;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* TOP BAR */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      background: #fff;
+      border-bottom: 1px solid #dde1e7;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 12px;
+      z-index: 200;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
+    }
+
+    .top-logo {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1d4ed8;
+    }
+
+    .top-badge {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      border-radius: 4px;
+      padding: 2px 9px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .top-meta {
+      font-size: 12px;
+      color: #6b7280;
+      margin-left: auto;
+    }
+
+    /* LAYOUT */
+    .layout {
+      display: flex;
+      padding-top: 52px;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      position: fixed;
+      top: 52px;
+      left: 0;
+      width: 248px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+      background: #fff;
+      border-right: 1px solid #dde1e7;
+      padding: 16px 0 40px;
+      z-index: 100;
+    }
+
+    .toc-heading {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: #9ca3af;
+      padding: 0 16px 10px;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 6px;
+    }
+
+    .toc-list {
+      list-style: none;
+    }
+
+    .toc-list li a {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 5px 16px;
+      text-decoration: none;
+      color: #374151;
+      font-size: 12.5px;
+      line-height: 1.4;
+      border-left: 3px solid transparent;
+      transition: all .15s;
+    }
+
+    .toc-list li a:hover {
+      background: #f0f5ff;
+      color: #1d4ed8;
+      border-left-color: #93c5fd;
+    }
+
+    .toc-list li a.active {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-left-color: #1d4ed8;
+      font-weight: 700;
+    }
+
+    .toc-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #6b7280;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .toc-list li a.active .toc-num {
+      background: #1d4ed8;
+      color: #fff;
+    }
+
+    .toc-group-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #9ca3af;
+      padding: 12px 16px 3px;
+    }
+
+    /* MAIN */
+    .main {
+      margin-left: 248px;
+      flex: 1;
+      max-width: 820px;
+      padding: 32px 36px 80px;
+    }
+
+    /* HERO */
+    .hero {
+      background: #fff;
+      border: 1px solid #dde1e7;
+      border-radius: 10px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .hero-sub {
+      font-size: 14px;
+      color: #4b5563;
+      margin-bottom: 18px;
+      line-height: 1.7;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 5px;
+      padding: 3px 10px;
+      font-size: 12px;
+      color: #374151;
+      font-weight: 600;
+    }
+
+    .tag.blue {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+    }
+
+    .tag.green {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      color: #15803d;
+    }
+
+    .tag.orange {
+      background: #fff7ed;
+      border-color: #fed7aa;
+      color: #c2410c;
+    }
+
+    .tag.purple {
+      background: #faf5ff;
+      border-color: #e9d5ff;
+      color: #7e22ce;
+    }
+
+    /* CLONE BOX */
+    .clone-box {
+      background: #1e293b;
+      border-radius: 9px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .clone-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      color: #94a3b8;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .gl-badge {
+      background: #fc6d26;
+      color: #fff;
+      border-radius: 3px;
+      padding: 2px 7px;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .clone-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #0f172a;
+      border-radius: 6px;
+      padding: 9px 14px;
+    }
+
+    .clone-prompt {
+      color: #4ade80;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .clone-text {
+      color: #e2e8f0;
+      font-family: 'Courier New', monospace;
+      font-size: 12.5px;
+      flex: 1;
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      background: #334155;
+      border: none;
+      border-radius: 4px;
+      color: #94a3b8;
+      font-size: 11px;
+      padding: 4px 10px;
+      cursor: pointer;
+      flex-shrink: 0;
+      font-family: Arial, sans-serif;
+      transition: background .15s;
+    }
+
+    .copy-btn:hover {
+      background: #475569;
+      color: #fff;
+    }
+
+    .clone-note {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .clone-note a {
+      color: #60a5fa;
+    }
+
+    /* SECTION */
+    .section {
+      background: #fff;
+      border: 1px solid #dde1e7;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      scroll-margin-top: 68px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 22px;
+      border-bottom: 1px solid #f0f2f5;
+      background: #fafbfc;
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      background: #1d4ed8;
+      flex-shrink: 0;
+    }
+
+    .step-num.green {
+      background: #16a34a;
+    }
+
+    .step-num.teal {
+      background: #0891b2;
+    }
+
+    .step-num.purple {
+      background: #7c3aed;
+    }
+
+    .step-num.orange {
+      background: #ea580c;
+    }
+
+    .step-num.red {
+      background: #dc2626;
+    }
+
+    .step-num.gray {
+      background: #6b7280;
+    }
+
+    .sec-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .sec-subtitle {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 1px;
+    }
+
+    .section-body {
+      padding: 18px 22px;
+    }
+
+    h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1f2937;
+      margin: 16px 0 7px;
+    }
+
+    h3:first-child {
+      margin-top: 0;
+    }
+
+    p {
+      color: #4b5563;
+      font-size: 13.5px;
+      margin-bottom: 9px;
+    }
+
+    /* PLACEHOLDER */
+    .ph {
+      display: inline-block;
+      background: #fef3c7;
+      border: 1px dashed #f59e0b;
+      border-radius: 4px;
+      padding: 1px 7px;
+      font-size: 12px;
+      color: #92400e;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      cursor: help;
+      position: relative;
+    }
+
+    .ph:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f2937;
+      color: #f9fafb;
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      padding: 5px 10px;
+      border-radius: 5px;
+      white-space: nowrap;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    .ph-example {
+      display: block;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 5px;
+      padding: 5px 12px;
+      margin: 4px 0 8px;
+      font-size: 12px;
+      color: #166534;
+      font-family: 'Courier New', monospace;
+      line-height: 1.6;
+    }
+
+    .ph-example::before {
+      content: '▶ Ví dụ: ';
+      font-family: Arial, sans-serif;
+      font-weight: 700;
+      color: #16a34a;
+      font-size: 11px;
+    }
+
+    /* CODE BLOCKS */
+    .code-block {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 9px 0;
+      font-size: 12.5px;
+    }
+
+    .code-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f3f4f6;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 6px 13px;
+    }
+
+    .code-fname {
+      font-size: 11.5px;
+      color: #4b5563;
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+    }
+
+    .code-lang {
+      font-size: 10px;
+      color: #9ca3af;
+      background: #e5e7eb;
+      padding: 2px 7px;
+      border-radius: 3px;
+      font-weight: 700;
+    }
+
+    .code-body {
+      background: #1e293b;
+      padding: 13px 15px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      line-height: 1.75;
+    }
+
+    .line {
+      display: block;
+      white-space: pre;
+    }
+
+    .cm {
+      color: #64748b;
+    }
+
+    /* comment */
+    .cp {
+      color: #4ade80;
+    }
+
+    /* prompt $ */
+    .cc {
+      color: #e2e8f0;
+    }
+
+    /* command */
+    .co {
+      color: #86efac;
+    }
+
+    /* output */
+    .ck {
+      color: #7dd3fc;
+    }
+
+    /* key */
+    .cv {
+      color: #fde68a;
+    }
+
+    /* value */
+    .cs {
+      color: #a5f3fc;
+    }
+
+    /* string */
+    .kw {
+      color: #c084fc;
+    }
+
+    /* keyword */
+    .cn {
+      color: #fb923c;
+    }
+
+    /* number */
+    .cph {
+      color: #fbbf24;
+      background: rgba(251, 191, 36, .14);
+      border-radius: 3px;
+      padding: 0 3px;
+    }
+
+    /* placeholder in code */
+    /* DNS TABLE */
+    .dns-wrap {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 9px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+
+    thead th {
+      padding: 8px 13px;
+      text-align: left;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #6b7280;
+      border-bottom: 1px solid #e5e7eb;
+      background: #f9fafb;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: #fafbff;
+    }
+
+    tbody td {
+      padding: 9px 13px;
+      vertical-align: top;
+      font-family: 'Courier New', monospace;
+    }
+
+    .ttype {
+      color: #1d4ed8;
+      font-weight: 700;
+      font-size: 11.5px;
+    }
+
+    .thost {
+      color: #374151;
+      font-size: 12px;
+    }
+
+    .tval {
+      color: #15803d;
+      word-break: break-all;
+      font-size: 11px;
+      max-width: 260px;
+    }
+
+    .tdesc {
+      color: #4b5563;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+    }
+
+    /* CALLOUT */
+    .callout {
+      display: flex;
+      gap: 10px;
+      padding: 9px 13px;
+      border-radius: 7px;
+      margin: 9px 0;
+      font-size: 13px;
+    }
+
+    .callout-icon {
+      font-size: 15px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .callout.info {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+    }
+
+    .callout.success {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+
+    .callout.warning {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+    }
+
+    .callout.danger {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    /* PORT GRID */
+    .port-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+      gap: 9px;
+      margin: 9px 0;
+    }
+
+    .port-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 7px;
+      padding: 11px 13px;
+      background: #fafbfc;
+    }
+
+    .port-num {
+      font-size: 22px;
+      font-weight: 700;
+      color: #111827;
+      font-family: 'Courier New', monospace;
+    }
+
+    .port-num small {
+      font-size: 11px;
+      color: #9ca3af;
+      font-weight: 400;
+    }
+
+    .port-label {
+      font-size: 11.5px;
+      color: #4b5563;
+      margin: 3px 0 7px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+
+    .badge.req {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+    }
+
+    .badge.opt {
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      color: #6b7280;
+    }
+
+    .badge.intl {
+      background: #fdf4ff;
+      border: 1px solid #e9d5ff;
+      color: #7e22ce;
+    }
+
+    /* CHECKLIST */
+    .checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 9px 0;
+    }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 8px 12px;
+      background: #fafbfc;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #374151;
+    }
+
+    .ci {
+      width: 18px;
+      height: 18px;
+      background: #dcfce7;
+      border: 1px solid #bbf7d0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #16a34a;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* TROUBLE */
+    .trouble {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      margin: 7px 0;
+      overflow: hidden;
+    }
+
+    .trouble-q {
+      display: flex;
+      gap: 8px;
+      padding: 9px 13px;
+      background: #fef2f2;
+      border-bottom: 1px solid #fecaca;
+      font-size: 13px;
+      font-weight: 700;
+      color: #991b1b;
+    }
+
+    .trouble-a {
+      padding: 9px 13px;
+      font-size: 12.5px;
+      color: #374151;
+      background: #fff;
+      line-height: 1.7;
+    }
+
+    /* ARCH */
+    .arch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 18px;
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      margin: 9px 0;
+    }
+
+    .arch-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .arch-box {
+      border: 1.5px solid #e5e7eb;
+      border-radius: 7px;
+      padding: 7px 14px;
+      background: #fff;
+      text-align: center;
+      min-width: 105px;
+    }
+
+    .arch-box .abl {
+      font-size: 9px;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .arch-box .abv {
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+    }
+
+    .arch-box.blue {
+      border-color: #93c5fd;
+    }
+
+    .arch-box.blue .abv {
+      color: #1d4ed8;
+    }
+
+    .arch-box.green {
+      border-color: #86efac;
+    }
+
+    .arch-box.green .abv {
+      color: #15803d;
+    }
+
+    .arch-box.teal {
+      border-color: #67e8f9;
+    }
+
+    .arch-box.teal .abv {
+      color: #0e7490;
+    }
+
+    .arch-box.amber {
+      border-color: #fcd34d;
+    }
+
+    .arch-box.amber .abv {
+      color: #b45309;
+    }
+
+    .arch-box.purple {
+      border-color: #d8b4fe;
+    }
+
+    .arch-box.purple .abv {
+      color: #7c3aed;
+    }
+
+    .arch-arrow {
+      color: #9ca3af;
+      font-size: 15px;
+    }
+
+    .arch-line {
+      width: 1.5px;
+      height: 18px;
+      background: #d1d5db;
+    }
+
+    /* DIVIDER */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 6px 0 18px;
+    }
+
+    .divider hr {
+      flex: 1;
+      border: none;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .divider span {
+      font-size: 10.5px;
+      color: #9ca3af;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      white-space: nowrap;
+    }
+
+    /* FLOW */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 9px 0;
+    }
+
+    .flow-step {
+      display: flex;
+      gap: 13px;
+    }
+
+    .flow-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .flow-dot {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: #1d4ed8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .flow-line {
+      width: 1.5px;
+      flex: 1;
+      background: #d1d5db;
+      margin: 3px 0;
+      min-height: 14px;
+    }
+
+    .flow-content {
+      padding: 0 0 14px;
+      flex: 1;
+    }
+
+    .flow-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 2px;
+      margin-top: 3px;
+    }
+
+    .flow-desc {
+      font-size: 12.5px;
+      color: #6b7280;
+    }
+
+    /* RESULT */
+    .result-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 6px;
+      padding: 9px 13px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: #166534;
+      margin: 8px 0;
+    }
+
+    .result-label {
+      font-family: Arial, sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #16a34a;
+      margin-bottom: 3px;
+    }
+
+    code {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 3px;
+      padding: 1px 5px;
+      color: #1d4ed8;
+    }
+
+    /* SCROLL */
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 4px;
+    }
+
+    @media(max-width:640px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 20px 14px 60px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="top-bar">
+    <div class="top-logo">📧 Haraka Email Server — Setup Guidelines</div>
+    <span class="top-badge">Production-Ready</span>
+    <div class="top-meta">Ubuntu 20.04/22.04 · Node.js · Haraka SMTP</div>
+  </div>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="toc-heading">Table of Contents</div>
+      <ul class="toc-list">
+        <li><a href="#overview"><span class="toc-num">⬡</span>Tổng quan kiến trúc</a></li>
+        <div class="toc-group-label">Cài đặt</div>
+        <li><a href="#hostname"><span class="toc-num">01</span>Hostname &amp; Domain</a></li>
+        <li><a href="#nodejs"><span class="toc-num">02</span>Node.js &amp; Haraka</a></li>
+        <li><a href="#clone"><span class="toc-num">03</span>Clone GitLab Project</a></li>
+        <div class="toc-group-label">Cấu hình</div>
+        <li><a href="#smtp"><span class="toc-num">04</span>SMTP &amp; Plugins</a></li>
+        <li><a href="#tls"><span class="toc-num">05</span>SSL / TLS</a></li>
+        <li><a href="#auth"><span class="toc-num">06</span>Auth người dùng</a></li>
+        <div class="toc-group-label">DNS &amp; Auth Email</div>
+        <li><a href="#dns"><span class="toc-num">07</span>DNS Records</a></li>
+        <li><a href="#dkim"><span class="toc-num">08</span>DKIM &amp; SPF</a></li>
+        <li><a href="#ptr"><span class="toc-num">09</span>Reverse DNS / PTR</a></li>
+        <div class="toc-group-label">Vận hành</div>
+        <li><a href="#firewall"><span class="toc-num">10</span>Firewall &amp; Ports</a></li>
+        <li><a href="#pm2"><span class="toc-num">11</span>PM2 Process Manager</a></li>
+        <li><a href="#api"><span class="toc-num">12</span>Plugin API gửi mail</a></li>
+        <li><a href="#test"><span class="toc-num">13</span>Test gửi mail</a></li>
+        <li><a href="#troubleshoot"><span class="toc-num">14</span>Troubleshooting</a></li>
+        <li><a href="#checklist"><span class="toc-num">✓</span>Checklist Go Live</a></li>
+      </ul>
+    </nav>
+
+    <main class="main">
+
+      <!-- HERO -->
+      <div class="hero" id="overview">
+        <h1>Setup Email Server với Haraka trên Ubuntu</h1>
+        <p class="hero-sub">
+          Hướng dẫn toàn tập từ zero đến production — cài đặt, cấu hình SMTP, DNS, DKIM, SPF, TLS và test gửi mail ra
+          Gmail.<br>
+          Các ô màu vàng <span class="ph" data-tip="Thay bằng giá trị thực của bạn">&lt;placeholder&gt;</span> cần được
+          thay bằng thông tin thực tế. Di chuột vào để xem ghi chú.
+        </p>
+        <div class="hero-tags">
+          <span class="tag blue">Ubuntu 20.04/22.04</span>
+          <span class="tag green">Node.js LTS</span>
+          <span class="tag orange">Haraka SMTP</span>
+          <span class="tag purple">DKIM + SPF + DMARC</span>
+          <span class="tag">PM2</span>
+          <span class="tag">Let's Encrypt</span>
+        </div>
+      </div>
+
+      <!-- CLONE -->
+      <div class="clone-box" id="clone">
+        <div class="clone-header">
+          <span class="gl-badge">GL</span>
+          Clone project từ GitLab — bắt đầu nhanh
+        </div>
+        <div class="clone-row">
+          <span class="clone-prompt">$</span>
+          <span class="clone-text" id="clone-cmd-text">git clone
+            https://gitlab.com/Cuong.Truong97/haraka-prod.git</span>
+          <button class="copy-btn" onclick="doCopy()">Copy</button>
+        </div>
+        <div class="clone-row" style="margin-top:4px">
+          <span class="clone-prompt">$</span>
+          <span class="clone-text">cd haraka-prod &amp;&amp; npm install</span>
+        </div>
+        <div class="clone-note">
+          Repo: <a href="https://gitlab.com/Cuong.Truong97/haraka-prod"
+            target="_blank">gitlab.com/Cuong.Truong97/haraka-prod</a>
+          — Chứa toàn bộ cấu hình Haraka đã setup sẵn (smtp.ini, plugins, config mẫu). Sau khi clone, chỉnh các file
+          config theo hướng dẫn bên dưới.
+        </div>
+      </div>
+
+      <!-- ARCHITECTURE -->
+      <div class="section">
+        <div class="section-head">
+          <div class="step-num gray">⬡</div>
+          <div>
+            <div class="sec-title">Kiến trúc tổng quan</div>
+            <div class="sec-subtitle">Luồng dữ liệu từ App → Haraka → Internet</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="arch">
+            <div class="arch-row">
+              <div class="arch-box blue">
+                <div class="abl">Client / App</div>
+                <div class="abv">Your App</div>
+              </div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box green">
+                <div class="abl">HTTP API</div>
+                <div class="abv">:5000</div>
+              </div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box teal">
+                <div class="abl">Haraka Plugin</div>
+                <div class="abv">sendMail.js</div>
+              </div>
+            </div>
+            <div class="arch-line"></div>
+            <div class="arch-row">
+              <div class="arch-box amber">
+                <div class="abl">SMTP Core</div>
+                <div class="abv">Port 25/587</div>
+              </div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box purple">
+                <div class="abl">DKIM Sign</div>
+                <div class="abv">dkim_sign</div>
+              </div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box green">
+                <div class="abl">Gửi đi</div>
+                <div class="abv">Gmail / etc</div>
+              </div>
+            </div>
+            <div style="margin-top:10px;font-size:11.5px;color:#6b7280;text-align:center;">
+              Server FQDN: <span class="ph" data-tip="FQDN đầy đủ của mail server">&lt;mail-server-fqdn&gt;</span> — IP:
+              <span class="ph" data-tip="IP Public của VPS">&lt;your-server-ip&gt;</span>
+            </div>
+          </div>
+          <div class="flow">
+            <div class="flow-step">
+              <div class="flow-left">
+                <div class="flow-dot">1</div>
+                <div class="flow-line"></div>
+              </div>
+              <div class="flow-content">
+                <div class="flow-title">Chuẩn bị VPS &amp; Hostname</div>
+                <div class="flow-desc">Cấu hình hostname, FQDN, DNS A/MX trỏ về IP server</div>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-left">
+                <div class="flow-dot">2</div>
+                <div class="flow-line"></div>
+              </div>
+              <div class="flow-content">
+                <div class="flow-title">Cài Node.js &amp; Haraka + Clone project</div>
+                <div class="flow-desc">Cài runtime, SMTP engine, clone repo GitLab đã cấu hình sẵn</div>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-left">
+                <div class="flow-dot">3</div>
+                <div class="flow-line"></div>
+              </div>
+              <div class="flow-content">
+                <div class="flow-title">Cấu hình SMTP + Plugins + TLS + Auth</div>
+                <div class="flow-desc">smtp.ini, plugins, certificate, user auth flat file</div>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-left">
+                <div class="flow-dot">4</div>
+                <div class="flow-line"></div>
+              </div>
+              <div class="flow-content">
+                <div class="flow-title">DNS: SPF + DKIM + DMARC + PTR</div>
+                <div class="flow-desc">Thêm TXT records vào DNS để mail không vào spam</div>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-left">
+                <div class="flow-dot">5</div>
+              </div>
+              <div class="flow-content">
+                <div class="flow-title">Test &amp; Monitor với PM2</div>
+                <div class="flow-desc">Gửi mail test, kiểm tra deliverability, giữ server luôn chạy</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider">
+        <hr><span>Cài đặt</span>
+        <hr>
+      </div>
+
+      <!-- 01 HOSTNAME -->
+      <div class="section" id="hostname">
+        <div class="section-head">
+          <div class="step-num">01</div>
+          <div>
+            <div class="sec-title">Cấu hình Hostname &amp; Domain</div>
+            <div class="sec-subtitle">Hostname và FQDN phải khớp với domain mail server</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <p>Hostname và FQDN ảnh hưởng trực tiếp đến uy tín server khi gửi mail. Phải cấu hình đúng trước khi cài bất
+            kỳ thứ gì.</p>
+
+          <h3>Kiểm tra thông tin hiện tại</h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">Terminal</span><span class="code-lang">bash</span></div>
+            <div class="code-body">
+              <span class="line"><span class="cp">$</span> <span class="cc">hostname</span> <span class="cm"># tên ngắn
+                  của server</span></span>
+              <span class="line"><span class="co">demo</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">hostname -f</span> <span class="cm"># FQDN
+                  đầy đủ</span></span>
+              <span class="line"><span class="co">demo.akadigital.net</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">ifconfig | grep "inet "</span></span>
+              <span class="line"><span class="co">inet 158.101.137.14 netmask 255.255.255.0</span></span>
+            </div>
+          </div>
+
+          <h3>Sửa /etc/hostname</h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">/etc/hostname</span><span class="code-lang">config</span>
+            </div>
+            <div class="code-body">
+              <span class="line"><span class="cph">&lt;short-hostname&gt;</span> <span class="cm"># chỉ tên ngắn, không
+                  có dấu chấm</span></span>
+            </div>
+          </div>
+          <span class="ph-example">demo</span>
+
+          <h3>Sửa /etc/hosts — khai báo FQDN</h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">/etc/hosts</span><span class="code-lang">config</span></div>
+            <div class="code-body">
+              <span class="line"><span class="cm">### ADD NEW</span></span>
+              <span class="line"><span class="cph">&lt;your-server-ip&gt;</span> <span
+                  class="cph">&lt;mail-server-fqdn&gt;</span> <span class="cph">&lt;short-hostname&gt;</span></span>
+            </div>
+          </div>
+          <span class="ph-example">158.101.137.14 demo.akadigital.net demo</span>
+
+          <div class="callout warning">
+            <div class="callout-icon">⚠️</div>
+            <div>Sau khi sửa cả 2 file, chạy <code>sudo reboot</code>. Sau reboot kiểm tra <code>hostname -f</code> phải
+              trả về đúng FQDN.</div>
+          </div>
+
+          <h3>DNS A và MX cần tạo tại nhà cung cấp domain</h3>
+          <div class="dns-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Name</th>
+                  <th>Value</th>
+                  <th>Mục đích</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="ttype">A</td>
+                  <td class="thost"><span class="ph"
+                      data-tip="Subdomain của mail server, vd: demo, mail">&#60;mail-subdomain&#62;</span></td>
+                  <td class="tval"><span class="ph" data-tip="IP Public của VPS">&#60;your-server-ip&#62;</span></td>
+                  <td class="tdesc">Trỏ subdomain về IP server</td>
+                </tr>
+                <tr>
+                  <td class="ttype">MX</td>
+                  <td class="thost">@ (root domain)</td>
+                  <td class="tval"><span class="ph"
+                      data-tip="FQDN đầy đủ của mail server">&#60;mail-server-fqdn&#62;</span></td>
+                  <td class="tdesc">Mail exchanger record</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <span class="ph-example">A: demo → 158.101.137.14 &nbsp;|&nbsp; MX: @ → demo.akadigital.net</span>
+        </div>
+      </div>
+
+      <!-- 02 NODEJS -->
+      <div class="section" id="nodejs">
+        <div class="section-head">
+          <div class="step-num">02</div>
+          <div>
+            <div class="sec-title">Cài đặt Node.js &amp; Haraka</div>
+            <div class="sec-subtitle">Haraka là SMTP server viết bằng Node.js</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">Terminal</span><span class="code-lang">bash</span></div>
+            <div class="code-body">
+              <span class="line"><span class="cm"># Thêm NodeSource repository và cài Node.js</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">curl -fsSL
+                  https://deb.nodesource.com/setup_lts.x | sudo -E bash -</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">sudo apt install nodejs -y</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm"># Kiểm tra</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">node -v</span> <span class="cm">→</span>
+                <span class="co">v20.15.0</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">npm -v</span> <span class="cm">→</span>
+                <span class="co">10.7.0</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm"># Cài Haraka global</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">sudo npm install -g Haraka</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm"># Chạy thử (port 25 cần sudo)</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">haraka -c .</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">sudo node haraka.js</span> <span
+                  class="cm"># dùng khi listen port 25</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider">
+        <hr><span>Cấu hình</span>
+        <hr>
+      </div>
+
+      <!-- 04 SMTP -->
+      <div class="section" id="smtp">
+        <div class="section-head">
+          <div class="step-num green">04</div>
+          <div>
+            <div class="sec-title">Cấu hình SMTP &amp; Plugins</div>
+            <div class="sec-subtitle">smtp.ini và danh sách plugin cần kích hoạt</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <h3>config/smtp.ini</h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">config/smtp.ini</span><span class="code-lang">ini</span>
+            </div>
+            <div class="code-body">
+              <span class="line"><span class="cm">; Port lắng nghe — 25 (server-to-server)</span></span>
+              <span class="line"><span class="ck">port</span>=<span class="cv">25</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm">; Chạy bằng cách sử dụng cụm để phân nhánh nhiều quy trình phụ
+                  trợ</span></span>
+              <span class="line"><span class="cm">; Số worker process = số CPU core</span></span>
+              <span class="line"><span class="ck">nodes</span>=<span class="cn">1</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm">; Chạy Haraka dưới dạng một background service (daemon) thay vì chạy
+                  trực tiếp trong terminal.</span></span>
+              <span class="line"><span class="ck">daemonize</span>=<span class="cph">false</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm">; Save memory by spooling large mesages to disk</span></span>
+              <span class="line"><span class="ck">spool_dir</span>=<span class="cph">/var/spool/haraka</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm">; Setup domain Outbound</span></span>
+              <span class="line"><span class="ob" style="color: #16a34a;"><b>[outbound]</b></span></span>
+              <span class="line"><span class="ck">dkim_private_key=private_new.key</span></span>
+              <span class="line"><span class="ck">dkim_selector=aka</span></span>
+              <span class="line"><span class="ck">dkim_domain=demo.akadigital.net</span></span>
+              <span class="line"><span class="ck">dkim_algorithm=rsa-sha256</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm">; Setup Headers</span></span>
+              <span class="line"><span class="ob" style="color: #16a34a;"><b>[headers]</b></span></span>
+              <span class="line"><span class="ck">max_lines</span>=<span class="cn">1000</span></span>
+              <span class="line"><span class="ck">max_received</span>=<span class="cn">100</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm">; Setup SMTP</span></span>
+              <span class="line"><span class="ob" style="color: #16a34a;"><b>[smtp]</b></span></span>
+              <span class="line"><span class="ck">host</span>=<span class="cn">123.30.139.73</span></span>
+              <span class="line"><span class="ck">port</span>=<span class="cn">25</span></span>
+              <span class="line"><span class="ck">auth</span>=<span class="cn">true</span></span>
+              <span class="line"><span class="ck">user</span>=<span class="cn">username1</span></span>
+            </div>
+          </div>
+          <span class="ph-example">me=demo.akadigital.net &nbsp;|&nbsp; listen_ip=158.101.137.14</span>
+
+          <h3>config/plugins — bật/tắt từng plugin</h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">config/plugins</span><span class="code-lang">config</span>
+            </div>
+            <div class="code-body">
+              <span class="line"><span class="cv">dnsbl</span> <span class="cm"># chặn IP trong blacklist
+                  DNS</span></span>
+              <span class="line"><span class="cv">helo.checks</span> <span class="cm"># kiểm tra HELO/EHLO hợp
+                  lệ</span></span>
+              <span class="line"><span class="cv">tls</span> <span class="cm"># bật STARTTLS encryption</span></span>
+              <span class="line"><span class="cv">auth/flat_file</span> <span class="cm"># xác thực user từ file
+                  ini</span></span>
+              <span class="line"><span class="cv">mail_from.is_resolvable</span> <span class="cm"># domain người gửi
+                  phải có DNS</span></span>
+              <span class="line"><span class="cv">rcpt_to.in_host_list</span> <span class="cm"># chỉ nhận mail cho
+                  domain trong host_list</span></span>
+              <span class="line"><span class="cv">headers</span> <span class="cm"># tự động thêm Date,
+                  Message-ID</span></span>
+              <span class="line"><span class="cv">dkim_sign</span> <span class="cm"># ký DKIM cho mail gửi
+                  đi</span></span>
+              <span class="line"><span class="cv">dkim_verify</span> <span class="cm"># xác minh DKIM mail nhận
+                  vào</span></span>
+              <span class="line"><span class="cv">sendMail</span> <span class="cm"># Cấu hình server api sent mail
+                  (optional)</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 05 TLS -->
+      <div class="section" id="tls">
+        <div class="section-head">
+          <div class="step-num teal">05</div>
+          <div>
+            <div class="sec-title">SSL / TLS</div>
+            <div class="sec-subtitle">Mã hóa kết nối SMTP — bắt buộc cho production</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <h3>Tạo self-signed certificate</h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">Terminal — chạy trong thư mục config/</span><span
+                class="code-lang">bash</span></div>
+            <div class="code-body">
+              <span class="line"><span class="cp">$</span> <span class="cc">cd config</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">openssl req -x509 -nodes -days 2190 -newkey
+                  rsa:2048 \</span></span>
+              <span class="line"> <span class="cc">-keyout tls_key.pem \</span></span>
+              <span class="line"> <span class="cc">-out tls_cert.pem</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm"># Khi được hỏi Common Name — điền FQDN của server:</span></span>
+              <span class="line"><span class="co">Common Name: </span><span
+                  class="cph">&lt;mail-server-fqdn&gt;</span></span>
+            </div>
+          </div>
+          <span class="ph-example">Common Name: demo.akadigital.net</span>
+
+          <h3>config/tls.ini</h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">config/tls.ini</span><span class="code-lang">ini</span>
+            </div>
+            <div class="code-body">
+              <span class="line"><span class="ck">key</span>=<span class="cv">config/tls_key.pem</span></span>
+              <span class="line"><span class="ck">cert</span>=<span class="cv">config/tls_cert.pem</span></span>
+              <span class="line"><span class="ck">dhparam</span>=<span class="cv">config/dhparam.pem</span> <span
+                  class="cm"># optional</span></span>
+            </div>
+          </div>
+
+          <div class="callout success">
+            <div class="callout-icon">✓</div>
+            <div><strong>Production:</strong> Dùng Let's Encrypt:
+              <code>sudo certbot certonly --standalone -d <span class="ph" data-tip="FQDN mail server">&#60;mail-server-fqdn&#62;</span></code>
+              — sau đó trỏ tls.ini về <code>/etc/letsencrypt/live/&lt;fqdn&gt;/privkey.pem</code></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 06 AUTH -->
+      <div class="section" id="auth">
+        <div class="section-head">
+          <div class="step-num purple">06</div>
+          <div>
+            <div class="sec-title">Cấu hình Auth người dùng</div>
+            <div class="sec-subtitle">Tạo username/password cho phép gửi mail qua server</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">config/auth_flat_file.ini</span><span
+                class="code-lang">ini</span></div>
+            <div class="code-body">
+              <span class="line"><span class="ck">[core]</span></span>
+              <span class="line"><span class="ck">methods</span>=<span class="cv">PLAIN,LOGIN,CRAM-MD5</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="ck">[users]</span></span>
+              <span class="line"><span class="cm"># Format: &lt;username-hoặc-email&gt;=&lt;password&gt;</span></span>
+              <span class="line"><span class="cph">&lt;mail-username-1&gt;</span>=<span
+                  class="cph">&lt;password-1&gt;</span></span>
+              <span class="line"><span class="cph">&lt;sender-email-1&gt;</span>=<span
+                  class="cph">&lt;password-2&gt;</span></span>
+              <span class="line"><span class="cph">&lt;sender-email-2&gt;</span>=<span
+                  class="cph">&lt;password-3&gt;</span></span>
+            </div>
+          </div>
+          <span class="ph-example">username1=akatestpassword &nbsp;|&nbsp; cuong@demo.akadigital.com=password2
+            &nbsp;|&nbsp; cuong.truong@akadigital.vn=password3</span>
+        </div>
+      </div>
+
+      <div class="divider">
+        <hr><span>DNS &amp; Email Authentication</span>
+        <hr>
+      </div>
+
+      <!-- 07 DNS -->
+      <div class="section" id="dns">
+        <div class="section-head">
+          <div class="step-num orange">07</div>
+          <div>
+            <div class="sec-title">DNS Records đầy đủ</div>
+            <div class="sec-subtitle">Cấu hình tại DNS manager của domain</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <p>Tất cả records cần có trước khi mail server đi vào hoạt động:</p>
+          <div class="dns-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Name / Host</th>
+                  <th>Value</th>
+                  <th>Mục đích</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="ttype">A</td>
+                  <td class="thost"><span class="ph"
+                      data-tip="Subdomain của mail server, vd: demo, mail">&#60;mail-subdomain&#62;</span></td>
+                  <td class="tval"><span class="ph" data-tip="IP Public của VPS">&#60;your-server-ip&#62;</span></td>
+                  <td class="tdesc">Trỏ subdomain về IP</td>
+                </tr>
+                <tr>
+                  <td class="ttype">MX</td>
+                  <td class="thost">@ (root)</td>
+                  <td class="tval"><span class="ph"
+                      data-tip="FQDN của server, vd: demo.akadigital.net">&#60;mail-server-fqdn&#62;</span></td>
+                  <td class="tdesc">Mail exchanger</td>
+                </tr>
+                <tr>
+                  <td class="ttype">TXT</td>
+                  <td class="thost">@ (root)</td>
+                  <td class="tval">v=spf1 ip4:<span class="ph"
+                      data-tip="IP Public của VPS">&#60;your-server-ip&#62;</span> ~all</td>
+                  <td class="tdesc">SPF — authorize IP gửi mail</td>
+                </tr>
+                <tr>
+                  <td class="ttype">TXT</td>
+                  <td class="thost"><span class="ph"
+                      data-tip="Tên selector DKIM, vd: aka, default">&#60;dkim-selector&#62;</span>._domainkey</td>
+                  <td class="tval">v=DKIM1; k=rsa; p=<span class="ph"
+                      data-tip="Nội dung public key (bỏ header/footer BEGIN/END)">&#60;dkim-public-key&#62;</span></td>
+                  <td class="tdesc">DKIM public key</td>
+                </tr>
+                <tr>
+                  <td class="ttype">TXT</td>
+                  <td class="thost">_dmarc</td>
+                  <td class="tval">v=DMARC1; p=none; rua=mailto:<span class="ph"
+                      data-tip="Email nhận báo cáo DMARC hàng ngày">&#60;dmarc-report-email&#62;</span></td>
+                  <td class="tdesc">DMARC policy</td>
+                </tr>
+                <tr>
+                  <td class="ttype">PTR</td>
+                  <td class="thost"><span class="ph" data-tip="IP Public của VPS">&#60;your-server-ip&#62;</span></td>
+                  <td class="tval"><span class="ph" data-tip="FQDN của mail server">&#60;mail-server-fqdn&#62;</span>
+                  </td>
+                  <td class="tdesc">Reverse DNS — set tại VPS provider</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Ví dụ thực tế — akadigital.net &amp; unitohub.vn</h3>
+          <div class="dns-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Name</th>
+                  <th>Value</th>
+                  <th>Ghi chú</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="ttype">A</td>
+                  <td class="thost">demo</td>
+                  <td class="tval">158.101.137.14</td>
+                  <td class="tdesc">Subdomain mail của akadigital.net — IP VPS Oracle Cloud</td>
+                </tr>
+                <tr>
+                  <td class="ttype">MX</td>
+                  <td class="thost">@</td>
+                  <td class="tval">demo.akadigital.net</td>
+                  <td class="tdesc">Mail exchanger của akadigital.net</td>
+                </tr>
+                <tr>
+                  <td class="ttype">TXT</td>
+                  <td class="thost">@ (akadigital.net)</td>
+                  <td class="tval">v=spf1 ip4:158.101.137.14 ~all</td>
+                  <td class="tdesc">SPF cho akadigital.net</td>
+                </tr>
+                <tr>
+                  <td class="ttype">TXT</td>
+                  <td class="thost">@ (app.unito.vn)</td>
+                  <td class="tval">v=spf1 ip4:131.186.43.4 ~all</td>
+                  <td class="tdesc">SPF cho app.unito.vn — IP khác</td>
+                </tr>
+                <tr>
+                  <td class="ttype">TXT</td>
+                  <td class="thost">unito._domainkey .app.unitohub.vn</td>
+                  <td class="tval">v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqcDmt
+                    pkatAfURmw4rsc26cNsMbNHltXSK0sH1djxVi5kSrcq0IA WUoAuK8gdAfK1j2d1WnnrRndkQPSh/JwSfxB8H256P1F/
+                    06+nddkOReJyxJ42K5H1vnH4toD0Q5kE/H4rXrHpvoOk L119Deofzjtm40OBm1h8OCTgiqztm9QIDAQAB</td>
+                  <td class="tdesc">DKIM — selector "unito", domain app.unitohub.vn</td>
+                </tr>
+                <tr>
+                  <td class="ttype">PTR</td>
+                  <td class="thost">158.101.137.14</td>
+                  <td class="tval">demo.akadigital.net</td>
+                  <td class="tdesc">Reverse DNS — cấu hình tại Oracle Cloud control panel</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Kiểm tra DNS đã propagate</h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">Terminal</span><span class="code-lang">bash</span></div>
+            <div class="code-body">
+              <span class="line"><span class="cp">$</span> <span class="cc">dig MX <span
+                    class="cph">&lt;your-domain&gt;</span></span></span>
+              <span class="line"><span class="co">demo.akadigital.net. 300 IN MX 10 demo.akadigital.net.</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">dig TXT <span
+                    class="cph">&lt;your-domain&gt;</span> | grep spf</span></span>
+              <span class="line"><span class="co">"v=spf1 ip4:158.101.137.14 ~all"</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">nslookup <span
+                    class="cph">&lt;your-server-ip&gt;</span></span> <span class="cm"># kiểm tra PTR</span></span>
+              <span class="line"><span class="co">name = demo.akadigital.net.</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 08 DKIM -->
+      <div class="section" id="dkim">
+        <div class="section-head">
+          <div class="step-num purple">08</div>
+          <div>
+            <div class="sec-title">Tạo DKIM &amp; SPF</div>
+            <div class="sec-subtitle">Chữ ký số cho email — bắt buộc để không vào spam Gmail</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <h3>Bước 1 — Cài plugin và tạo key pair</h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">Terminal</span><span class="code-lang">bash</span></div>
+            <div class="code-body">
+              <span class="line"><span class="cp">$</span> <span class="cc">npm install haraka-plugin-dkim</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm"># Tạo private key 1024/2048-bit RSA</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">openssl genrsa -out private_mail.key
+                  1024</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm"># Tạo public key từ private key</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">openssl rsa -in private_mail.key -out
+                  public_mail.key -pubout -outform PEM</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm"># Bảo mật private key</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">chmod 600 private_mail.key</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm"># Lấy public key để dán vào DNS (bỏ dòng BEGIN/END)</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">grep -v "BEGIN\|END" public_mail.key | tr -d
+                  '\n'</span></span>
+            </div>
+          </div>
+
+          <h3>Bước 2 — config/dkim_sign.ini</h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">config/dkim_sign.ini</span><span
+                class="code-lang">ini</span></div>
+            <div class="code-body">
+              <span class="line"><span class="ck">[<span class="cph">&lt;your-domain&gt;</span>]</span></span>
+              <span class="line"><span class="ck">keyfile</span>=<span class="cph">&lt;path-to-private-key&gt;</span>
+                <span class="cm"># đường dẫn tuyệt đối đến private key</span></span>
+              <span class="line"><span class="ck">selector</span>=<span class="cph">&lt;dkim-selector&gt;</span> <span
+                  class="cm"># tên selector, vd: aka, default, mail</span></span>
+            </div>
+          </div>
+          <span class="ph-example">[demo.akadigital.net] &nbsp;|&nbsp; keyfile=/opt/mailserver/config/private.key
+            &nbsp;|&nbsp; selector=aka</span>
+
+          <h3>Cách 2 — tạo trực tiếp bằng command</h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">Chạy đoạn code sau để tự động tạo key </span><span
+                class="code-lang">ini</span></div>
+            <div class="code-body">
+              <span class="line"><span class="ck">openssl genrsa -out private_mail.key 1024
+                  openssl rsa -in private_mail.key -out public_mail.key -pubout -outform PEM</span></span>
+            </div>
+          </div>
+          <span class="ph-example">[demo.akadigital.net] &nbsp;|&nbsp; private_keyfile=/opt/mailserver/config/private_mail.key
+            &nbsp;|&nbsp; public_keyfile=/opt/mailserver/config/public_mail.key</span>
+
+          <h3>Bước cuối — DNS TXT Record DKIM</h3>
+          <div class="dns-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Trường</th>
+                  <th>Giá trị</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="thost" style="font-family:Arial">Name / Host</td>
+                  <td class="tval"><span class="ph"
+                      data-tip="Tên selector DKIM">&#60;dkim-selector&#62;</span>._domainkey.<span class="ph"
+                      data-tip="Domain của bạn">&#60;your-domain&#62;</span></td>
+                </tr>
+                <tr>
+                  <td class="thost" style="font-family:Arial">Type</td>
+                  <td class="tval">TXT</td>
+                </tr>
+                <tr>
+                  <td class="thost" style="font-family:Arial">Value</td>
+                  <td class="tval">v=DKIM1; k=rsa; p=<span class="ph"
+                      data-tip="Nội dung public key không có header/footer">&#60;dkim-public-key&#62;</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <span class="ph-example">aka._domainkey.demo.akadigital.net → v=DKIM1; k=rsa;
+            p=MIGfMA0GCSqGSIb3DQEBAQUAA4GN...</span>
+
+          <div class="callout info">
+            <div class="callout-icon">🔍</div>
+            <div>Kiểm tra DKIM tại <strong>mxtoolbox.com/dkim.aspx</strong> — nhập domain và selector. Kết quả <em>"DKIM
+                Record Found"</em> là thành công.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 09 PTR -->
+      <div class="section" id="ptr">
+        <div class="section-head">
+          <div class="step-num orange">09</div>
+          <div>
+            <div class="sec-title">Reverse DNS / PTR Record</div>
+            <div class="sec-subtitle">Cấu hình tại nhà cung cấp VPS — không phải DNS domain</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="callout warning">
+            <div class="callout-icon">⚠️</div>
+            <div>PTR record <strong>KHÔNG</strong> cấu hình trong DNS panel của domain. Phải vào <strong>control panel
+                của VPS provider</strong> (Oracle Cloud, DigitalOcean, Vultr...) để set Reverse DNS cho IP.</div>
+          </div>
+
+          <div class="dns-wrap" style="margin-top:10px">
+            <table>
+              <thead>
+                <tr>
+                  <th>Trường</th>
+                  <th>Placeholder</th>
+                  <th>Ví dụ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="thost" style="font-family:Arial">IP cần set PTR</td>
+                  <td class="tval"><span class="ph" data-tip="IP Public của VPS">&#60;your-server-ip&#62;</span></td>
+                  <td class="tdesc">158.101.137.14</td>
+                </tr>
+                <tr>
+                  <td class="thost" style="font-family:Arial">PTR trỏ về</td>
+                  <td class="tval"><span class="ph"
+                      data-tip="FQDN của mail server, phải khớp hostname -f">&#60;mail-server-fqdn&#62;</span></td>
+                  <td class="tdesc">demo.akadigital.net</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Kiểm tra PTR</h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">Terminal</span><span class="code-lang">bash</span></div>
+            <div class="code-body">
+              <span class="line"><span class="cp">$</span> <span class="cc">nslookup <span
+                    class="cph">&lt;your-server-ip&gt;</span></span></span>
+              <span class="line"><span class="co">name = demo.akadigital.net.</span> <span class="cm"># kết quả mong
+                  đợi</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider">
+        <hr><span>Vận hành</span>
+        <hr>
+      </div>
+
+      <!-- 10 FIREWALL -->
+      <div class="section" id="firewall">
+        <div class="section-head">
+          <div class="step-num red">10</div>
+          <div>
+            <div class="sec-title">Firewall &amp; Ports cần mở</div>
+            <div class="sec-subtitle">UFW và Security Group của VPS provider</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="port-grid">
+            <div class="port-card">
+              <div class="port-num">25 <small>TCP</small></div>
+              <div class="port-label">SMTP — nhận mail từ server khác</div><span class="badge req">Bắt buộc</span>
+            </div>
+            <div class="port-card">
+              <div class="port-num">587 <small>TCP</small></div>
+              <div class="port-label">Submission — client gửi mail (có auth)</div><span class="badge req">Bắt
+                buộc</span>
+            </div>
+            <div class="port-card">
+              <div class="port-num">465 <small>TCP</small></div>
+              <div class="port-label">SMTPS — SMTP over SSL</div><span class="badge opt">Tùy chọn</span>
+            </div>
+            <div class="port-card">
+              <div class="port-num">22 <small>TCP</small></div>
+              <div class="port-label">SSH — quản trị server</div><span class="badge req">Bắt buộc</span>
+            </div>
+            <div class="port-card">
+              <div class="port-num">5000 <small>TCP</small></div>
+              <div class="port-label">HTTP API sendMail plugin</div><span class="badge intl">Internal</span>
+            </div>
+          </div>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">UFW Setup</span><span class="code-lang">bash</span></div>
+            <div class="code-body">
+              <span class="line"><span class="cm"># Làm SSH trước để không bị lock out!</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">sudo ufw allow 22/tcp</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">sudo ufw allow 25/tcp && sudo ufw allow
+                  587/tcp</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">sudo ufw enable</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">sudo ufw status verbose</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm"># Kiểm tra port đang listen</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">sudo netstat -tulpn | grep 25</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">sudo nmap -p 25 <span
+                    class="cph">&lt;your-server-ip&gt;</span></span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11 PM2 -->
+      <div class="section" id="pm2">
+        <div class="section-head">
+          <div class="step-num green">11</div>
+          <div>
+            <div class="sec-title">PM2 — Process Manager</div>
+            <div class="sec-subtitle">Giữ Haraka luôn chạy, tự restart khi crash</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">Terminal</span><span class="code-lang">bash</span></div>
+            <div class="code-body">
+              <span class="line"><span class="cp">$</span> <span class="cc">sudo npm install pm2 -g</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm"># Khởi động Haraka qua PM2</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">pm2 start haraka.js --name
+                  "mailserver"</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm"># Tự start khi reboot</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">sudo pm2 startup && sudo pm2
+                  save</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cm"># Lệnh thường dùng</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">pm2 status</span> <span class="cm"># xem tất
+                  cả process</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">pm2 logs mailserver</span> <span
+                  class="cm"># log realtime</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">pm2 restart mailserver</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">pm2 stop mailserver</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 12 API -->
+      <div class="section" id="api">
+        <div class="section-head">
+          <div class="step-num teal">12</div>
+          <div>
+            <div class="sec-title">Plugin API gửi mail</div>
+            <div class="sec-subtitle">HTTP API gửi mail qua Haraka — 2 cách triển khai</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <p>Tạo file <code>plugins/sendMail.js</code> và khai báo tên file trong <code>config/plugins</code>. Plugin
+            expose HTTP API POST tại port 5000.</p>
+
+          <h3>Gọi API — ví dụ request body</h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">HTTP POST /api/send-email</span><span
+                class="code-lang">json</span></div>
+            <div class="code-body">
+              <span class="line">{</span>
+              <span class="line"> <span class="ck">"from"</span>: <span class="cs">"<span
+                    class="cph">&lt;sender-display-name&gt;</span> &lt;<span
+                    class="cph">&lt;sender-email&gt;</span>&gt;"</span>,</span>
+              <span class="line"> <span class="ck">"to"</span>: <span class="cs">"<span
+                    class="cph">&lt;recipient-email&gt;</span>"</span>,</span>
+              <span class="line"> <span class="ck">"subject"</span>: <span class="cs">"<span
+                    class="cph">&lt;email-subject&gt;</span>"</span>,</span>
+              <span class="line"> <span class="ck">"html"</span>: <span class="cs">"&lt;h1&gt;Nội dung
+                  email&lt;/h1&gt;"</span></span>
+              <span class="line">}</span>
+            </div>
+          </div>
+          <span class="ph-example">
+            "from": "Trương Phú Cường &lt;aka@demo.akadigital.net&gt;"<br>
+            "to": "phucuong200297@gmail.com"<br>
+            "subject": "This mail come from API POST"
+          </span>
+
+          <h3>Nodemailer transporter với DKIM signing</h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">plugins/sendMail.js — nodemailer config</span><span
+                class="code-lang">javascript</span></div>
+            <div class="code-body">
+              <span class="line"><span class="kw">const</span> <span class="cv">transporter</span> = <span
+                  class="cv">nodemailer.createTransport</span>({</span>
+              <span class="line"> <span class="ck">host</span>: <span class="cs">'localhost'</span>, <span
+                  class="ck">port</span>: <span class="cn">25</span>, <span class="ck">secure</span>: <span
+                  class="kw">false</span>,</span>
+              <span class="line"> <span class="ck">auth</span>: { <span class="ck">user</span>: <span
+                  class="cph">'&lt;mail-username&gt;'</span>, <span class="ck">pass</span>: <span
+                  class="cph">'&lt;mail-password&gt;'</span> },</span>
+              <span class="line"> <span class="ck">tls</span>: { <span class="ck">rejectUnauthorized</span>: <span
+                  class="kw">false</span> },</span>
+              <span class="line"> <span class="ck">dkim</span>: {</span>
+              <span class="line"> <span class="ck">domainName</span>: <span
+                  class="cph">'&lt;your-domain&gt;'</span>,</span>
+              <span class="line"> <span class="ck">keySelector</span>: <span
+                  class="cph">'&lt;dkim-selector&gt;'</span>,</span>
+              <span class="line"> <span class="ck">privateKey</span>: <span class="cv">fs.readFileSync</span>(<span
+                  class="cph">'&lt;path-to-private-key&gt;'</span>)</span>
+              <span class="line"> }</span>
+              <span class="line">});</span>
+            </div>
+          </div>
+          <span class="ph-example">
+            user: username1 &nbsp;|&nbsp; domainName: demo.akadigital.net &nbsp;|&nbsp; keySelector: aka &nbsp;|&nbsp;
+            privateKey: ./config/private.key
+          </span>
+        </div>
+      </div>
+
+      <!-- 13 TEST -->
+      <div class="section" id="test">
+        <div class="section-head">
+          <div class="step-num">13</div>
+          <div>
+            <div class="sec-title">Test gửi mail</div>
+            <div class="sec-subtitle">Dùng swaks và kiểm tra deliverability score</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">Terminal — swaks</span><span class="code-lang">bash</span>
+            </div>
+            <div class="code-body">
+              <span class="line"><span class="cp">$</span> <span class="cc">sudo apt-get install swaks -y</span></span>
+              <span class="line"></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">swaks \</span></span>
+              <span class="line"> <span class="cc">--to <span class="cph">&lt;recipient-email&gt;</span> \</span></span>
+              <span class="line"> <span class="cc">--from <span class="cph">&lt;sender-email&gt;</span> \</span></span>
+              <span class="line"> <span class="cc">--server localhost --port 587 \</span></span>
+              <span class="line"> <span class="cc">--auth-user <span class="cph">&lt;mail-username&gt;</span>
+                  \</span></span>
+              <span class="line"> <span class="cc">--auth-password <span class="cph">&lt;mail-password&gt;</span>
+                  \</span></span>
+              <span class="line"> <span class="cc">--tls</span></span>
+            </div>
+          </div>
+          <span class="ph-example">--to phucuong200297@gmail.com --from aka@demo.akadigital.net --auth-user username1
+            --auth-password akatestpassword</span>
+
+          <div class="result-box">
+            <div class="result-label">Expected output</div>
+            &lt;** 250 2.0.0 Ok: queued as A1B2C3D4E5<br>
+            &lt;** Connection closed.
+          </div>
+
+          <h3>Kiểm tra Deliverability</h3>
+          <ul class="checklist">
+            <li>
+              <div class="ci">✓</div>
+              <div><strong>mail-tester.com</strong> — gửi mail đến địa chỉ test ngẫu nhiên, nhận điểm /10 và phân tích
+                chi tiết</div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div><strong>MXToolbox</strong> (mxtoolbox.com) — kiểm tra blacklist, SPF, DKIM, MX records</div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div><strong>Google Postmaster Tools</strong> — theo dõi reputation domain với Gmail</div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div><strong>Gmail header</strong> — mở mail → More → Show original → kiểm tra dkim=pass, spf=pass</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 14 TROUBLESHOOT -->
+      <div class="section" id="troubleshoot">
+        <div class="section-head">
+          <div class="step-num orange">14</div>
+          <div>
+            <div class="sec-title">Troubleshooting thường gặp</div>
+            <div class="sec-subtitle">Debug log và xử lý lỗi phổ biến</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <h3>Xem log Haraka</h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-fname">Terminal</span><span class="code-lang">bash</span></div>
+            <div class="code-body">
+              <span class="line"><span class="cp">$</span> <span class="cc">pm2 logs mailserver</span> <span
+                  class="cm"># log realtime</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">pm2 logs mailserver | grep -i
+                  "error\|bounce"</span> <span class="cm"># chỉ lỗi</span></span>
+              <span class="line"><span class="cp">$</span> <span class="cc">pm2 logs mailserver | grep -i
+                  "delivered"</span> <span class="cm"># gửi thành công</span></span>
+            </div>
+          </div>
+
+          <div class="trouble">
+            <div class="trouble-q">✕ Mail vào spam Gmail / dkim=fail trong header</div>
+            <div class="trouble-a">
+              Kiểm tra DNS:
+              <code>dig TXT <span class="ph" data-tip="selector DKIM">&#60;selector&#62;</span>._domainkey.<span class="ph" data-tip="domain của bạn">&#60;your-domain&#62;</span></code><br>
+              Đảm bảo selector trong <code>dkim_sign.ini</code> khớp với tên trong DNS (vd: <code>selector=aka</code> →
+              DNS name: <code>aka._domainkey</code>)<br>
+              Kiểm tra đường dẫn private key trong config có đúng không.
+            </div>
+          </div>
+          <div class="trouble">
+            <div class="trouble-q">✕ Connection refused port 25</div>
+            <div class="trouble-a">
+              <code>sudo netstat -tulpn | grep 25</code> — Haraka có đang listen không?<br>
+              <code>pm2 status</code> — process còn sống không?<br>
+              Kiểm tra Security Group/Firewall tại VPS provider đã mở port 25. AWS, GCP mặc định block port 25.
+            </div>
+          </div>
+          <div class="trouble">
+            <div class="trouble-q">✕ 550 5.7.1 — IP bị blacklist</div>
+            <div class="trouble-a">
+              Kiểm tra tại <strong>mxtoolbox.com/blacklists.aspx</strong> với <span class="ph"
+                data-tip="IP VPS server">&#60;your-server-ip&#62;</span><br>
+              Request delist tại Spamhaus: <code>www.spamhaus.org/removal/</code>
+            </div>
+          </div>
+          <div class="trouble">
+            <div class="trouble-q">✕ Authentication failed khi gửi mail</div>
+            <div class="trouble-a">
+              Kiểm tra username/password trong <code>config/auth_flat_file.ini</code><br>
+              Thêm flag <code>-v</code> vào lệnh swaks để xem chi tiết quá trình auth.
+            </div>
+          </div>
+          <div class="trouble">
+            <div class="trouble-q">✕ Mail stuck trong queue</div>
+            <div class="trouble-a">
+              <code>ls -la ./queue/</code> — xem file đang đợi<br>
+              <code>pm2 logs mailserver | grep "temp fail\|bounce"</code> — xem lý do fail<br>
+              MX record của domain nhận có thể không resolve — kiểm tra <code>dig MX gmail.com</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHECKLIST -->
+      <div class="section" id="checklist">
+        <div class="section-head">
+          <div class="step-num green">✓</div>
+          <div>
+            <div class="sec-title">Checklist trước khi Go Live</div>
+            <div class="sec-subtitle">Đánh dấu đủ tất cả trước khi đưa vào production</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <ul class="checklist">
+            <li>
+              <div class="ci">✓</div>
+              <div><code>hostname -f</code> trả về đúng <span class="ph"
+                  data-tip="FQDN của server">&#60;mail-server-fqdn&#62;</span></div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div>A record <span class="ph" data-tip="subdomain mail">&#60;subdomain&#62;</span> → <span class="ph"
+                  data-tip="IP server">&#60;your-server-ip&#62;</span> đã propagate</div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div>MX record <code>@</code> → <span class="ph"
+                  data-tip="FQDN mail server">&#60;mail-server-fqdn&#62;</span> đã có</div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div>SPF:
+                <code>v=spf1 ip4:<span class="ph" data-tip="IP server">&#60;your-server-ip&#62;</span> ~all</code></div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div>DKIM: <code><span class="ph" data-tip="selector DKIM">&#60;selector&#62;</span>._domainkey</code> có
+                public key đúng</div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div>DMARC:
+                <code>_dmarc → v=DMARC1; p=none; rua=mailto:<span class="ph" data-tip="email nhận report">&#60;report-email&#62;</span></code>
+              </div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div>PTR: <span class="ph" data-tip="IP server">&#60;your-server-ip&#62;</span> → <span class="ph"
+                  data-tip="FQDN server">&#60;mail-server-fqdn&#62;</span> (set tại VPS provider)</div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div>TLS cert đã cài, <code>tls.ini</code> trỏ đúng đường dẫn key/cert</div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div>Auth users đã cấu hình trong <code>auth_flat_file.ini</code></div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div>Port 25, 587 đã mở trên UFW và Security Group VPS</div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div>PM2: <code>pm2 startup</code> và <code>pm2 save</code> đã chạy</div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div>Test gửi mail đến Gmail thành công — header: dkim=pass, spf=pass</div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div>mail-tester.com đạt ≥ 8/10</div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div>IP không có trong major blacklists (Spamhaus, Barracuda...)</div>
+            </li>
+            <li>
+              <div class="ci">✓</div>
+              <div>GitLab repo đã clone: <code>git clone https://gitlab.com/Cuong.Truong97/haraka-prod.git</code></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    function doCopy() {
+      const t = document.getElementById('clone-cmd-text').textContent;
+      navigator.clipboard.writeText(t).then(() => {
+        const b = document.querySelector('.copy-btn');
+        b.textContent = 'Copied!';
+        b.style.cssText = 'background:#16a34a;color:#fff;';
+        setTimeout(() => { b.textContent = 'Copy'; b.style.cssText = ''; }, 1800);
+      });
+    }
+
+    // Smooth scroll + active TOC
+    document.querySelectorAll('.toc-list a').forEach(a => {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.querySelectorAll('.toc-list a').forEach(x => x.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Auto highlight on scroll
+    const secs = document.querySelectorAll('[id]');
+    const links = document.querySelectorAll('.toc-list a');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(l => {
+            l.classList.remove('active');
+            if (l.getAttribute('href') === '#' + e.target.id) l.classList.add('active');
+          });
+        }
+      });
+    }, { rootMargin: '-10% 0px -75% 0px' });
+    secs.forEach(s => obs.observe(s));
+  </script>
+</body>
+
+</html>
